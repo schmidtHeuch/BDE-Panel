@@ -150,11 +150,10 @@ public class BDE_EmployeeDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void get_DBTableData()
-    {        
+    private void get_DBTableData() {        
         try
         {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             String myURL = "jdbc:sqlserver://HV-ABAS-SQL;databaseName=DiafBDE;integratedSecurity=true";
             myConnection = DriverManager.getConnection(myURL);
             if (myConnection != null) 
@@ -179,7 +178,7 @@ public class BDE_EmployeeDialog extends javax.swing.JDialog {
             }            
             lbl_rowCount.setText(String.valueOf(myTableModel.getRowCount()));
         }
-        catch (ClassNotFoundException | SQLException myException )
+        catch (/*ClassNotFoundException | */SQLException myException )
         {
         }
         finally {
