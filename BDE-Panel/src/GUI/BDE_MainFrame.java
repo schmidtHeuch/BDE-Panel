@@ -5,11 +5,19 @@
  */
 package GUI;
 
+import DBTools.DB_ConnectionManager;
+import java.awt.Toolkit;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -18,18 +26,34 @@ import javax.swing.table.DefaultTableModel;
  */
 public class BDE_MainFrame extends javax.swing.JFrame {
     
-    public boolean EndingMyThread = false;
-    DefaultTableModel myTableModel;
-
     /**
      * Creates new form BDE_MainFrame
      */
     public BDE_MainFrame() {
         initComponents();
         this.do_startTheClock();
-        this.do_manageAllBeforeShow();
+        this.do_preBuild();
     }
-
+    
+    boolean myAnswerIfConnected;
+    Connection myConnection;
+    DB_ConnectionManager MY_DBCM;
+    public boolean EndingMyThread = false;
+    DefaultTableModel myTableModel_team;
+    String Unterabteilung;    
+    
+    private void do_preBuild() {
+        myTableModel_team = (DefaultTableModel) jTable_team.getModel();
+        jComboBox_Unterabteilung.addItem("WZV");
+        jComboBox_Unterabteilung.addItem("Werkstatt");
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyy");
+        lbl_currentDate.setText(LocalDate.now().format(df));
+        if (myTableModel_team.getRowCount() == 0) {
+            btn_PersonalAbmelden.setEnabled(false);
+        }
+        btn_AuftragAbmelden.setEnabled(false);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -39,568 +63,949 @@ public class BDE_MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel_head_buttons = new javax.swing.JPanel();
-        btn_employee_signOn = new javax.swing.JButton();
-        btn_employee_signOff = new javax.swing.JButton();
-        btn_order_signOn = new javax.swing.JButton();
-        btn_order_signOff = new javax.swing.JButton();
-        btn_activities = new javax.swing.JButton();
-        btn_exit = new javax.swing.JButton();
-        jPanel_clock = new javax.swing.JPanel();
+        jPanel_base = new javax.swing.JPanel();
+        jPanel_head_Bearbeitung = new javax.swing.JPanel();
+        btn_PersonalAnmelden = new javax.swing.JButton();
+        btn_PersonalAbmelden = new javax.swing.JButton();
+        btn_AuftragAnmelden = new javax.swing.JButton();
+        btn_AuftragAbmelden = new javax.swing.JButton();
+        btn_Taetigkeiten = new javax.swing.JButton();
+        btn_ProgrammBeenden = new javax.swing.JButton();
+        jPanel_AktuelleUhrzeit = new javax.swing.JPanel();
         lbl_clock = new javax.swing.JLabel();
         lbl_currentDate = new javax.swing.JLabel();
-        jPanel_workArea = new javax.swing.JPanel();
-        jComboBox_workArea = new javax.swing.JComboBox<>();
-        jPanel_team = new javax.swing.JPanel();
+        jPanel_Unterabteilung = new javax.swing.JPanel();
+        jComboBox_Unterabteilung = new javax.swing.JComboBox<>();
+        jPanel_Team = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable_employeesSignedOn = new javax.swing.JTable();
-        jPanel_currentJobs = new javax.swing.JPanel();
+        jTable_team = new javax.swing.JTable();
+        jPanel_AktuelleTaetigkeiten = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable_currentJobs = new javax.swing.JTable();
-        jPanel_currentArticleData = new javax.swing.JPanel();
-        jTextField_currentOrder = new javax.swing.JTextField();
-        lbl_currentOrder = new javax.swing.JLabel();
-        lbl_currentArticle = new javax.swing.JLabel();
-        jTextFieldl_currentArticle = new javax.swing.JTextField();
-        lbl_currentArticleCountOfUse = new javax.swing.JLabel();
-        jTextField_currentArticleCountOfUse = new javax.swing.JTextField();
-        lbl_plannedStartInProduction = new javax.swing.JLabel();
-        jTextFiell_plannedStartInProduction = new javax.swing.JTextField();
-        lbl_currentMachine = new javax.swing.JLabel();
-        jTextField_currentMachine = new javax.swing.JTextField();
-        jPanel_currentJob = new javax.swing.JPanel();
-        btn_currentJob_start = new javax.swing.JButton();
-        btn_currentJob_end = new javax.swing.JButton();
-        jTextFieldlbl_currentJob_startTime = new javax.swing.JTextField();
-        lbl_currentJob_startTime = new javax.swing.JLabel();
-        lbl_currentJob_endTime = new javax.swing.JLabel();
-        jTextFieldlbl_currentJob_endTime = new javax.swing.JTextField();
+        jTable_AktuelleTaetigkeiten = new javax.swing.JTable();
+        jPanel_AktuellerArtikelFA = new javax.swing.JPanel();
+        jPanel_editLabels_AktuellerArtikelFA = new javax.swing.JPanel();
+        lbl_Artikel = new javax.swing.JLabel();
+        lbl_Fertigungsauftrag = new javax.swing.JLabel();
+        lbl_Maschine = new javax.swing.JLabel();
+        lbl_geplanterStartProduktion = new javax.swing.JLabel();
+        lbl_Nutzen = new javax.swing.JLabel();
+        jPanel_editTextFields_AktuellerArtikelFA = new javax.swing.JPanel();
+        jTextField_Artikel = new javax.swing.JTextField();
+        jTextField_Fertigungsauftrag = new javax.swing.JTextField();
+        jTextField_Maschine = new javax.swing.JTextField();
+        jTextField_geplanterStartProduktion = new javax.swing.JTextField();
+        jTextField_Nutzen = new javax.swing.JTextField();
+        jPanel_Werkzeugkomponenten = new javax.swing.JPanel();
+        jPanel_editLabels_Werkzeugkomponenten_1 = new javax.swing.JPanel();
+        lbl_Werkzeug = new javax.swing.JLabel();
+        lbl_Segment = new javax.swing.JLabel();
+        lbl_Grundform = new javax.swing.JLabel();
+        lbl_Schnitt = new javax.swing.JLabel();
+        lbl_Stapelung = new javax.swing.JLabel();
+        lbl_Stanzblech = new javax.swing.JLabel();
+        lbl_Stanzbrille = new javax.swing.JLabel();
+        lbl_Vorstempel = new javax.swing.JLabel();
+        lbl_Niederhalterplatte = new javax.swing.JLabel();
+        jPanel_editTextFields_Werkzeugkomponenten_1 = new javax.swing.JPanel();
+        jTextField_Werkzeug = new javax.swing.JTextField();
+        jTextField_Segment = new javax.swing.JTextField();
+        jTextField_Grundform = new javax.swing.JTextField();
+        jTextField_Schnitt = new javax.swing.JTextField();
+        jTextField_Stapelung = new javax.swing.JTextField();
+        jTextField_Stanzblech = new javax.swing.JTextField();
+        jTextField_Stanzbrille = new javax.swing.JTextField();
+        jTextField_Vorstempel = new javax.swing.JTextField();
+        jTextField_Niederhalterplatte = new javax.swing.JTextField();
+        jPanel_editLabels_Werkzeugkomponenten_2 = new javax.swing.JPanel();
+        lbl_Ausbrechstempel = new javax.swing.JLabel();
+        lbl_Lochwerkzeug = new javax.swing.JLabel();
+        lbl_STAL = new javax.swing.JLabel();
+        lbl_Führungskäfig = new javax.swing.JLabel();
+        lbl_Säulengestell = new javax.swing.JLabel();
+        lbl_Schriftzug = new javax.swing.JLabel();
+        lbl_Glocke = new javax.swing.JLabel();
+        lbl_Zentrierer = new javax.swing.JLabel();
+        jPanel_editTextFields_Werkzeugkomponenten_2 = new javax.swing.JPanel();
+        jTextField_Ausbrechstempel = new javax.swing.JTextField();
+        jTextField_Lochwerkzeug = new javax.swing.JTextField();
+        jTextField_STAL = new javax.swing.JTextField();
+        jTextField_Führungskäfig = new javax.swing.JTextField();
+        jTextField_Säulengestell = new javax.swing.JTextField();
+        jTextField_Schriftzug = new javax.swing.JTextField();
+        jTextField_Glocke = new javax.swing.JTextField();
+        jTextField_Zentrierer = new javax.swing.JTextField();
+        jPanel_AktuellerArbeitsgang = new javax.swing.JPanel();
+        btn_start = new javax.swing.JButton();
+        btn_stop = new javax.swing.JButton();
+        jTextField_StartAktuellerArbeitsgang = new javax.swing.JTextField();
+        lbl_StartAktuellerArbeitsgang = new javax.swing.JLabel();
+        lbl_EndeAktuellerArbeitsgang = new javax.swing.JLabel();
+        jTextField_EndeAktuellerArbeitsgang = new javax.swing.JTextField();
         jTextField_remarks_fromOutside = new javax.swing.JTextField();
         jTextField_remarks_toOutside = new javax.swing.JTextField();
         lbl_remarks_fromOutside = new javax.swing.JLabel();
         lbl_remarks_toOutside = new javax.swing.JLabel();
-        jPanel_currentTool_components = new javax.swing.JPanel();
-        lbl_currentWKZ = new javax.swing.JLabel();
-        jTextFiell_currentTool = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        jTextField_AktuellerArbeitsgang = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setBackground(new java.awt.Color(204, 255, 204));
 
-        btn_employee_signOn.setText("<html>Personal<br>anmelden</html>");
-        btn_employee_signOn.addActionListener(new java.awt.event.ActionListener() {
+        jPanel_base.setBackground(new java.awt.Color(204, 255, 204));
+
+        jPanel_head_Bearbeitung.setBorder(javax.swing.BorderFactory.createTitledBorder("Bearbeitung"));
+        jPanel_head_Bearbeitung.setOpaque(false);
+
+        btn_PersonalAnmelden.setText("<html><center>Personal<br>anmelden</center></html>");
+        btn_PersonalAnmelden.setPreferredSize(new java.awt.Dimension(100, 60));
+        btn_PersonalAnmelden.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_employee_signOnActionPerformed(evt);
+                btn_PersonalAnmeldenActionPerformed(evt);
             }
         });
 
-        btn_employee_signOff.setText("<html>Personal<br>abmelden</html>");
-
-        btn_order_signOn.setText("<html>Auftrag<br>anmelden</html>");
-        btn_order_signOn.addActionListener(new java.awt.event.ActionListener() {
+        btn_PersonalAbmelden.setText("<html><center>Personal<br>abmelden</center></html>");
+        btn_PersonalAbmelden.setPreferredSize(new java.awt.Dimension(100, 60));
+        btn_PersonalAbmelden.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_order_signOnActionPerformed(evt);
+                btn_PersonalAbmeldenActionPerformed(evt);
             }
         });
 
-        btn_order_signOff.setText("<html>Auftrag<br>abmelden</html>");
-
-        btn_activities.setText("Tätigkeit");
-
-        btn_exit.setText("Exit");
-        btn_exit.addActionListener(new java.awt.event.ActionListener() {
+        btn_AuftragAnmelden.setText("<html><center>Auftrag<br>anmelden</center></html>");
+        btn_AuftragAnmelden.setPreferredSize(new java.awt.Dimension(100, 60));
+        btn_AuftragAnmelden.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_exitActionPerformed(evt);
+                btn_AuftragAnmeldenActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel_head_buttonsLayout = new javax.swing.GroupLayout(jPanel_head_buttons);
-        jPanel_head_buttons.setLayout(jPanel_head_buttonsLayout);
-        jPanel_head_buttonsLayout.setHorizontalGroup(
-            jPanel_head_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_head_buttonsLayout.createSequentialGroup()
+        btn_AuftragAbmelden.setText("<html><center>Auftrag<br>abmelden</center></html>");
+        btn_AuftragAbmelden.setPreferredSize(new java.awt.Dimension(100, 60));
+        btn_AuftragAbmelden.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_AuftragAbmeldenActionPerformed(evt);
+            }
+        });
+
+        btn_Taetigkeiten.setText("<html><center>Tätigkeiten</center></html>");
+        btn_Taetigkeiten.setPreferredSize(new java.awt.Dimension(100, 60));
+        btn_Taetigkeiten.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_TaetigkeitenActionPerformed(evt);
+            }
+        });
+
+        btn_ProgrammBeenden.setBackground(new java.awt.Color(255, 51, 51));
+        btn_ProgrammBeenden.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btn_ProgrammBeenden.setForeground(new java.awt.Color(255, 255, 255));
+        btn_ProgrammBeenden.setText("<html><center>Programm<br>beenden</center></html>");
+        btn_ProgrammBeenden.setPreferredSize(new java.awt.Dimension(100, 60));
+        btn_ProgrammBeenden.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ProgrammBeendenActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel_head_BearbeitungLayout = new javax.swing.GroupLayout(jPanel_head_Bearbeitung);
+        jPanel_head_Bearbeitung.setLayout(jPanel_head_BearbeitungLayout);
+        jPanel_head_BearbeitungLayout.setHorizontalGroup(
+            jPanel_head_BearbeitungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_head_BearbeitungLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btn_employee_signOn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_PersonalAnmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btn_employee_signOff, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_PersonalAbmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_order_signOn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_AuftragAnmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_order_signOff, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 366, Short.MAX_VALUE)
-                .addComponent(btn_activities)
-                .addGap(30, 30, 30)
-                .addComponent(btn_exit)
+                .addComponent(btn_AuftragAbmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 859, Short.MAX_VALUE)
+                .addComponent(btn_Taetigkeiten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_ProgrammBeenden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        jPanel_head_buttonsLayout.setVerticalGroup(
-            jPanel_head_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_head_buttonsLayout.createSequentialGroup()
+        jPanel_head_BearbeitungLayout.setVerticalGroup(
+            jPanel_head_BearbeitungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_head_BearbeitungLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel_head_buttonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_exit, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_employee_signOn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_employee_signOff, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_order_signOn, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_activities, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_order_signOff, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGroup(jPanel_head_BearbeitungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_ProgrammBeenden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_PersonalAnmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_PersonalAbmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_AuftragAnmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_Taetigkeiten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_AuftragAbmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jPanel_AktuelleUhrzeit.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktuelle Uhrzeit"));
+        jPanel_AktuelleUhrzeit.setOpaque(false);
 
         lbl_clock.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         lbl_clock.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_clock.setText("jLabel1");
+        lbl_clock.setPreferredSize(new java.awt.Dimension(211, 51));
 
         lbl_currentDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_currentDate.setText("jLabel7");
+        lbl_currentDate.setPreferredSize(new java.awt.Dimension(211, 14));
 
-        javax.swing.GroupLayout jPanel_clockLayout = new javax.swing.GroupLayout(jPanel_clock);
-        jPanel_clock.setLayout(jPanel_clockLayout);
-        jPanel_clockLayout.setHorizontalGroup(
-            jPanel_clockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_clockLayout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel_AktuelleUhrzeitLayout = new javax.swing.GroupLayout(jPanel_AktuelleUhrzeit);
+        jPanel_AktuelleUhrzeit.setLayout(jPanel_AktuelleUhrzeitLayout);
+        jPanel_AktuelleUhrzeitLayout.setHorizontalGroup(
+            jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuelleUhrzeitLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel_clockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_clock, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
-                    .addComponent(lbl_currentDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbl_clock, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                    .addComponent(lbl_currentDate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel_clockLayout.setVerticalGroup(
-            jPanel_clockLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_clockLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lbl_clock, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lbl_currentDate))
-        );
-
-        jComboBox_workArea.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-
-        javax.swing.GroupLayout jPanel_workAreaLayout = new javax.swing.GroupLayout(jPanel_workArea);
-        jPanel_workArea.setLayout(jPanel_workAreaLayout);
-        jPanel_workAreaLayout.setHorizontalGroup(
-            jPanel_workAreaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_workAreaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jComboBox_workArea, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel_workAreaLayout.setVerticalGroup(
-            jPanel_workAreaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_workAreaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jComboBox_workArea, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jTable_employeesSignedOn.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Name", "Vorname"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(jTable_employeesSignedOn);
-
-        javax.swing.GroupLayout jPanel_teamLayout = new javax.swing.GroupLayout(jPanel_team);
-        jPanel_team.setLayout(jPanel_teamLayout);
-        jPanel_teamLayout.setHorizontalGroup(
-            jPanel_teamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_teamLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel_teamLayout.setVerticalGroup(
-            jPanel_teamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_teamLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jTable_currentJobs.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Bereich", "Artikel", "Start"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane2.setViewportView(jTable_currentJobs);
-
-        javax.swing.GroupLayout jPanel_currentJobsLayout = new javax.swing.GroupLayout(jPanel_currentJobs);
-        jPanel_currentJobs.setLayout(jPanel_currentJobsLayout);
-        jPanel_currentJobsLayout.setHorizontalGroup(
-            jPanel_currentJobsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_currentJobsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel_currentJobsLayout.setVerticalGroup(
-            jPanel_currentJobsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_currentJobsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jTextField_currentOrder.setEditable(false);
-
-        lbl_currentOrder.setText("Fertigungsauftrag");
-
-        lbl_currentArticle.setText("Artikel");
-
-        jTextFieldl_currentArticle.setEditable(false);
-
-        lbl_currentArticleCountOfUse.setText("Nutzen");
-
-        jTextField_currentArticleCountOfUse.setEditable(false);
-
-        lbl_plannedStartInProduction.setText("geplanter Start in der Produktion");
-
-        jTextFiell_plannedStartInProduction.setEditable(false);
-
-        lbl_currentMachine.setText("Maschine");
-
-        jTextField_currentMachine.setEditable(false);
-
-        javax.swing.GroupLayout jPanel_currentArticleDataLayout = new javax.swing.GroupLayout(jPanel_currentArticleData);
-        jPanel_currentArticleData.setLayout(jPanel_currentArticleDataLayout);
-        jPanel_currentArticleDataLayout.setHorizontalGroup(
-            jPanel_currentArticleDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_currentArticleDataLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel_currentArticleDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel_currentArticleDataLayout.createSequentialGroup()
-                        .addComponent(lbl_currentArticle, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lbl_currentOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel_currentArticleDataLayout.createSequentialGroup()
-                        .addComponent(jTextFieldl_currentArticle, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField_currentOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        jPanel_AktuelleUhrzeitLayout.setVerticalGroup(
+            jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuelleUhrzeitLayout.createSequentialGroup()
+                .addComponent(lbl_clock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_currentArticleDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_currentMachine, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_currentMachine, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_currentArticleDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFiell_plannedStartInProduction, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbl_plannedStartInProduction, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(78, 78, 78)
-                .addGroup(jPanel_currentArticleDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_currentArticleCountOfUse, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_currentArticleCountOfUse, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lbl_currentDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel_currentArticleDataLayout.setVerticalGroup(
-            jPanel_currentArticleDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_currentArticleDataLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel_currentArticleDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_currentOrder)
-                    .addComponent(lbl_currentArticle)
-                    .addComponent(lbl_currentArticleCountOfUse)
-                    .addComponent(lbl_plannedStartInProduction)
-                    .addComponent(lbl_currentMachine))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel_currentArticleDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField_currentOrder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldl_currentArticle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_currentArticleCountOfUse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFiell_plannedStartInProduction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_currentMachine, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+
+        jPanel_Unterabteilung.setBorder(javax.swing.BorderFactory.createTitledBorder("Unterabteilung"));
+        jPanel_Unterabteilung.setOpaque(false);
+
+        jComboBox_Unterabteilung.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jComboBox_Unterabteilung.setPreferredSize(new java.awt.Dimension(48, 30));
+
+        javax.swing.GroupLayout jPanel_UnterabteilungLayout = new javax.swing.GroupLayout(jPanel_Unterabteilung);
+        jPanel_Unterabteilung.setLayout(jPanel_UnterabteilungLayout);
+        jPanel_UnterabteilungLayout.setHorizontalGroup(
+            jPanel_UnterabteilungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_UnterabteilungLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jComboBox_Unterabteilung, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel_UnterabteilungLayout.setVerticalGroup(
+            jPanel_UnterabteilungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_UnterabteilungLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jComboBox_Unterabteilung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(114, Short.MAX_VALUE))
+        );
+
+        jPanel_Team.setBorder(javax.swing.BorderFactory.createTitledBorder("Team"));
+        jPanel_Team.setOpaque(false);
+        jPanel_Team.setPreferredSize(new java.awt.Dimension(200, 278));
+
+        jTable_team.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jTable_team.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Vorname", "Unterabteilung", "Personal-Nr."
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_team.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTable_team.setRowHeight(28);
+        jTable_team.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTable_team);
+        if (jTable_team.getColumnModel().getColumnCount() > 0) {
+            jTable_team.getColumnModel().getColumn(0).setPreferredWidth(180);
+            jTable_team.getColumnModel().getColumn(1).setPreferredWidth(120);
+            jTable_team.getColumnModel().getColumn(2).setPreferredWidth(150);
+            jTable_team.getColumnModel().getColumn(3).setPreferredWidth(80);
+        }
+
+        javax.swing.GroupLayout jPanel_TeamLayout = new javax.swing.GroupLayout(jPanel_Team);
+        jPanel_Team.setLayout(jPanel_TeamLayout);
+        jPanel_TeamLayout.setHorizontalGroup(
+            jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_TeamLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        jPanel_TeamLayout.setVerticalGroup(
+            jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 255, Short.MAX_VALUE)
+            .addGroup(jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_TeamLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        jPanel_AktuelleTaetigkeiten.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktuelle Tätigkeiten"));
+        jPanel_AktuelleTaetigkeiten.setOpaque(false);
+
+        jTable_AktuelleTaetigkeiten.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Unterabteilung", "Artikel", "Start", "Ende"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_AktuelleTaetigkeiten.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTable_AktuelleTaetigkeiten.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(jTable_AktuelleTaetigkeiten);
+        if (jTable_AktuelleTaetigkeiten.getColumnModel().getColumnCount() > 0) {
+            jTable_AktuelleTaetigkeiten.getColumnModel().getColumn(0).setPreferredWidth(150);
+        }
+
+        javax.swing.GroupLayout jPanel_AktuelleTaetigkeitenLayout = new javax.swing.GroupLayout(jPanel_AktuelleTaetigkeiten);
+        jPanel_AktuelleTaetigkeiten.setLayout(jPanel_AktuelleTaetigkeitenLayout);
+        jPanel_AktuelleTaetigkeitenLayout.setHorizontalGroup(
+            jPanel_AktuelleTaetigkeitenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuelleTaetigkeitenLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel_AktuelleTaetigkeitenLayout.setVerticalGroup(
+            jPanel_AktuelleTaetigkeitenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuelleTaetigkeitenLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        btn_currentJob_start.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
-        btn_currentJob_start.setText("Start");
+        jPanel_AktuellerArtikelFA.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktueller Artikel / FA"));
+        jPanel_AktuellerArtikelFA.setOpaque(false);
 
-        btn_currentJob_end.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
-        btn_currentJob_end.setText("Stopp");
+        jPanel_editLabels_AktuellerArtikelFA.setOpaque(false);
+        jPanel_editLabels_AktuellerArtikelFA.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 5));
 
-        jTextFieldlbl_currentJob_startTime.setEditable(false);
-        jTextFieldlbl_currentJob_startTime.setText("jTextField1");
+        lbl_Artikel.setText("Artikel");
+        lbl_Artikel.setPreferredSize(new java.awt.Dimension(150, 24));
+        jPanel_editLabels_AktuellerArtikelFA.add(lbl_Artikel);
 
-        lbl_currentJob_startTime.setText("Start aktueller Arbeitsgang");
+        lbl_Fertigungsauftrag.setText("Fertigungsauftrag");
+        lbl_Fertigungsauftrag.setPreferredSize(new java.awt.Dimension(150, 24));
+        jPanel_editLabels_AktuellerArtikelFA.add(lbl_Fertigungsauftrag);
 
-        lbl_currentJob_endTime.setText("Ende aktueller Arbeitsgang");
+        lbl_Maschine.setText("Maschine");
+        lbl_Maschine.setPreferredSize(new java.awt.Dimension(150, 24));
+        jPanel_editLabels_AktuellerArtikelFA.add(lbl_Maschine);
 
-        jTextFieldlbl_currentJob_endTime.setEditable(false);
-        jTextFieldlbl_currentJob_endTime.setText("jTextField2");
+        lbl_geplanterStartProduktion.setText("geplanter Start (Produktion)");
+        lbl_geplanterStartProduktion.setPreferredSize(new java.awt.Dimension(250, 24));
+        jPanel_editLabels_AktuellerArtikelFA.add(lbl_geplanterStartProduktion);
+
+        lbl_Nutzen.setText("Nutzen");
+        lbl_Nutzen.setPreferredSize(new java.awt.Dimension(100, 24));
+        jPanel_editLabels_AktuellerArtikelFA.add(lbl_Nutzen);
+
+        jPanel_editTextFields_AktuellerArtikelFA.setOpaque(false);
+        jPanel_editTextFields_AktuellerArtikelFA.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+
+        jTextField_Artikel.setEditable(false);
+        jTextField_Artikel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Artikel.setPreferredSize(new java.awt.Dimension(150, 24));
+        jTextField_Artikel.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                jTextField_ArtikelInputMethodTextChanged(evt);
+            }
+        });
+        jPanel_editTextFields_AktuellerArtikelFA.add(jTextField_Artikel);
+
+        jTextField_Fertigungsauftrag.setEditable(false);
+        jTextField_Fertigungsauftrag.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Fertigungsauftrag.setPreferredSize(new java.awt.Dimension(150, 24));
+        jPanel_editTextFields_AktuellerArtikelFA.add(jTextField_Fertigungsauftrag);
+
+        jTextField_Maschine.setEditable(false);
+        jTextField_Maschine.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Maschine.setPreferredSize(new java.awt.Dimension(150, 24));
+        jPanel_editTextFields_AktuellerArtikelFA.add(jTextField_Maschine);
+
+        jTextField_geplanterStartProduktion.setEditable(false);
+        jTextField_geplanterStartProduktion.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_geplanterStartProduktion.setPreferredSize(new java.awt.Dimension(250, 24));
+        jPanel_editTextFields_AktuellerArtikelFA.add(jTextField_geplanterStartProduktion);
+
+        jTextField_Nutzen.setEditable(false);
+        jTextField_Nutzen.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Nutzen.setPreferredSize(new java.awt.Dimension(100, 24));
+        jPanel_editTextFields_AktuellerArtikelFA.add(jTextField_Nutzen);
+
+        javax.swing.GroupLayout jPanel_AktuellerArtikelFALayout = new javax.swing.GroupLayout(jPanel_AktuellerArtikelFA);
+        jPanel_AktuellerArtikelFA.setLayout(jPanel_AktuellerArtikelFALayout);
+        jPanel_AktuellerArtikelFALayout.setHorizontalGroup(
+            jPanel_AktuellerArtikelFALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuellerArtikelFALayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel_AktuellerArtikelFALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel_editLabels_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel_editTextFields_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel_AktuellerArtikelFALayout.setVerticalGroup(
+            jPanel_AktuellerArtikelFALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuellerArtikelFALayout.createSequentialGroup()
+                .addComponent(jPanel_editLabels_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel_editTextFields_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel_Werkzeugkomponenten.setBorder(javax.swing.BorderFactory.createTitledBorder("Werkzeugkomponenten"));
+        jPanel_Werkzeugkomponenten.setOpaque(false);
+
+        jPanel_editLabels_Werkzeugkomponenten_1.setOpaque(false);
+        jPanel_editLabels_Werkzeugkomponenten_1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+
+        lbl_Werkzeug.setText("Werkzeug");
+        lbl_Werkzeug.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Werkzeug);
+
+        lbl_Segment.setText("Segment");
+        lbl_Segment.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Segment);
+
+        lbl_Grundform.setText("Grundform");
+        lbl_Grundform.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Grundform);
+
+        lbl_Schnitt.setText(" Schnitt");
+        lbl_Schnitt.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Schnitt);
+
+        lbl_Stapelung.setText("Stapelung");
+        lbl_Stapelung.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Stapelung);
+
+        lbl_Stanzblech.setText("Stanzblech");
+        lbl_Stanzblech.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Stanzblech);
+
+        lbl_Stanzbrille.setText("Stanzbrille");
+        lbl_Stanzbrille.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Stanzbrille);
+
+        lbl_Vorstempel.setText("Vorstempel");
+        lbl_Vorstempel.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Vorstempel);
+
+        lbl_Niederhalterplatte.setText("Niederhalterplatte");
+        lbl_Niederhalterplatte.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_1.add(lbl_Niederhalterplatte);
+
+        jPanel_editTextFields_Werkzeugkomponenten_1.setOpaque(false);
+        jPanel_editTextFields_Werkzeugkomponenten_1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+
+        jTextField_Werkzeug.setEditable(false);
+        jTextField_Werkzeug.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Werkzeug.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Werkzeug);
+
+        jTextField_Segment.setEditable(false);
+        jTextField_Segment.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Segment.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Segment);
+
+        jTextField_Grundform.setEditable(false);
+        jTextField_Grundform.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Grundform.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Grundform);
+
+        jTextField_Schnitt.setEditable(false);
+        jTextField_Schnitt.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Schnitt.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Schnitt);
+
+        jTextField_Stapelung.setEditable(false);
+        jTextField_Stapelung.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Stapelung.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Stapelung);
+
+        jTextField_Stanzblech.setEditable(false);
+        jTextField_Stanzblech.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Stanzblech.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Stanzblech);
+
+        jTextField_Stanzbrille.setEditable(false);
+        jTextField_Stanzbrille.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Stanzbrille.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Stanzbrille);
+
+        jTextField_Vorstempel.setEditable(false);
+        jTextField_Vorstempel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Vorstempel.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Vorstempel);
+
+        jTextField_Niederhalterplatte.setEditable(false);
+        jTextField_Niederhalterplatte.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Niederhalterplatte.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_1.add(jTextField_Niederhalterplatte);
+
+        jPanel_editLabels_Werkzeugkomponenten_2.setOpaque(false);
+        jPanel_editLabels_Werkzeugkomponenten_2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+
+        lbl_Ausbrechstempel.setText("Ausbrechstempel");
+        lbl_Ausbrechstempel.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_2.add(lbl_Ausbrechstempel);
+
+        lbl_Lochwerkzeug.setText("Lochwerkzeug");
+        lbl_Lochwerkzeug.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_2.add(lbl_Lochwerkzeug);
+
+        lbl_STAL.setText("STAL");
+        lbl_STAL.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_2.add(lbl_STAL);
+
+        lbl_Führungskäfig.setText("Führungskäfig");
+        lbl_Führungskäfig.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_2.add(lbl_Führungskäfig);
+
+        lbl_Säulengestell.setText("Säulengestell");
+        lbl_Säulengestell.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_2.add(lbl_Säulengestell);
+
+        lbl_Schriftzug.setText("Schriftzug");
+        lbl_Schriftzug.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_2.add(lbl_Schriftzug);
+
+        lbl_Glocke.setText("Glocke");
+        lbl_Glocke.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_2.add(lbl_Glocke);
+
+        lbl_Zentrierer.setText("Zentrierer");
+        lbl_Zentrierer.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editLabels_Werkzeugkomponenten_2.add(lbl_Zentrierer);
+
+        jPanel_editTextFields_Werkzeugkomponenten_2.setOpaque(false);
+        jPanel_editTextFields_Werkzeugkomponenten_2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 0, 0));
+
+        jTextField_Ausbrechstempel.setEditable(false);
+        jTextField_Ausbrechstempel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Ausbrechstempel.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_2.add(jTextField_Ausbrechstempel);
+
+        jTextField_Lochwerkzeug.setEditable(false);
+        jTextField_Lochwerkzeug.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Lochwerkzeug.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_2.add(jTextField_Lochwerkzeug);
+
+        jTextField_STAL.setEditable(false);
+        jTextField_STAL.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_STAL.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_2.add(jTextField_STAL);
+
+        jTextField_Führungskäfig.setEditable(false);
+        jTextField_Führungskäfig.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Führungskäfig.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_2.add(jTextField_Führungskäfig);
+
+        jTextField_Säulengestell.setEditable(false);
+        jTextField_Säulengestell.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Säulengestell.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_2.add(jTextField_Säulengestell);
+
+        jTextField_Schriftzug.setEditable(false);
+        jTextField_Schriftzug.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Schriftzug.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_2.add(jTextField_Schriftzug);
+
+        jTextField_Glocke.setEditable(false);
+        jTextField_Glocke.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Glocke.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_2.add(jTextField_Glocke);
+
+        jTextField_Zentrierer.setEditable(false);
+        jTextField_Zentrierer.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField_Zentrierer.setPreferredSize(new java.awt.Dimension(120, 24));
+        jPanel_editTextFields_Werkzeugkomponenten_2.add(jTextField_Zentrierer);
+
+        javax.swing.GroupLayout jPanel_WerkzeugkomponentenLayout = new javax.swing.GroupLayout(jPanel_Werkzeugkomponenten);
+        jPanel_Werkzeugkomponenten.setLayout(jPanel_WerkzeugkomponentenLayout);
+        jPanel_WerkzeugkomponentenLayout.setHorizontalGroup(
+            jPanel_WerkzeugkomponentenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_WerkzeugkomponentenLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel_WerkzeugkomponentenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel_editTextFields_Werkzeugkomponenten_1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel_editTextFields_Werkzeugkomponenten_2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel_editLabels_Werkzeugkomponenten_2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel_editLabels_Werkzeugkomponenten_1, javax.swing.GroupLayout.DEFAULT_SIZE, 1178, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel_WerkzeugkomponentenLayout.setVerticalGroup(
+            jPanel_WerkzeugkomponentenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_WerkzeugkomponentenLayout.createSequentialGroup()
+                .addGap(7, 7, 7)
+                .addComponent(jPanel_editLabels_Werkzeugkomponenten_1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel_editTextFields_Werkzeugkomponenten_1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel_editLabels_Werkzeugkomponenten_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel_editTextFields_Werkzeugkomponenten_2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel_AktuellerArbeitsgang.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktueller Arbeitsgang"));
+        jPanel_AktuellerArbeitsgang.setOpaque(false);
+
+        btn_start.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
+        btn_start.setText("Start");
+        btn_start.setPreferredSize(new java.awt.Dimension(560, 180));
+
+        btn_stop.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
+        btn_stop.setText("Stopp");
+        btn_stop.setPreferredSize(new java.awt.Dimension(560, 180));
+
+        jTextField_StartAktuellerArbeitsgang.setEditable(false);
+
+        lbl_StartAktuellerArbeitsgang.setText("Start aktueller Arbeitsgang");
+
+        lbl_EndeAktuellerArbeitsgang.setText("Ende aktueller Arbeitsgang");
+
+        jTextField_EndeAktuellerArbeitsgang.setEditable(false);
 
         jTextField_remarks_fromOutside.setEditable(false);
-        jTextField_remarks_fromOutside.setText("jTextField1");
-
-        jTextField_remarks_toOutside.setText("jTextField1");
 
         lbl_remarks_fromOutside.setText("Bemerkungen für den aktuellen Arbeitsbereich");
 
         lbl_remarks_toOutside.setText("Bemerkungen zur Weitergabe");
 
-        javax.swing.GroupLayout jPanel_currentJobLayout = new javax.swing.GroupLayout(jPanel_currentJob);
-        jPanel_currentJob.setLayout(jPanel_currentJobLayout);
-        jPanel_currentJobLayout.setHorizontalGroup(
-            jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_currentJobLayout.createSequentialGroup()
+        jTextField_AktuellerArbeitsgang.setEditable(false);
+        jTextField_AktuellerArbeitsgang.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
+
+        javax.swing.GroupLayout jPanel_AktuellerArbeitsgangLayout = new javax.swing.GroupLayout(jPanel_AktuellerArbeitsgang);
+        jPanel_AktuellerArbeitsgang.setLayout(jPanel_AktuellerArbeitsgangLayout);
+        jPanel_AktuellerArbeitsgangLayout.setHorizontalGroup(
+            jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuellerArbeitsgangLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jTextField_remarks_fromOutside)
-                        .addComponent(btn_currentJob_start, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
-                        .addComponent(lbl_currentJob_startTime)
-                        .addComponent(jTextFieldlbl_currentJob_startTime, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lbl_remarks_fromOutside))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_remarks_toOutside)
-                    .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(lbl_currentJob_endTime)
-                        .addComponent(btn_currentJob_end, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
-                        .addComponent(jTextFieldlbl_currentJob_endTime, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField_remarks_toOutside)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel_currentJobLayout.setVerticalGroup(
-            jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_currentJobLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btn_currentJob_start, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                    .addComponent(btn_currentJob_end, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(13, 13, 13)
-                .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_currentJob_startTime)
-                    .addComponent(lbl_currentJob_endTime))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldlbl_currentJob_startTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldlbl_currentJob_endTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_remarks_fromOutside)
-                    .addComponent(lbl_remarks_toOutside))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel_currentJobLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField_remarks_fromOutside, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-                    .addComponent(jTextField_remarks_toOutside))
+                .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextField_AktuellerArbeitsgang)
+                    .addGroup(jPanel_AktuellerArbeitsgangLayout.createSequentialGroup()
+                        .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btn_start, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbl_StartAktuellerArbeitsgang)
+                            .addComponent(lbl_remarks_fromOutside)
+                            .addComponent(jTextField_StartAktuellerArbeitsgang)
+                            .addComponent(jTextField_remarks_fromOutside))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lbl_remarks_toOutside)
+                            .addComponent(lbl_EndeAktuellerArbeitsgang)
+                            .addComponent(btn_stop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextField_remarks_toOutside)
+                            .addComponent(jTextField_EndeAktuellerArbeitsgang))))
                 .addContainerGap())
         );
-
-        lbl_currentWKZ.setText("WKZ - Werkzeug");
-
-        jTextFiell_currentTool.setEditable(false);
-        jTextFiell_currentTool.setText("jTextField1");
-
-        jLabel1.setText("GF - Grundform");
-
-        jTextField1.setText("jTextField1");
-
-        jLabel2.setText("KWV - Vorstempel");
-
-        jTextField2.setText("jTextField2");
-
-        jLabel3.setText("KWS - Schnitt");
-
-        jTextField3.setText("jTextField3");
-
-        jLabel4.setText("KSB - Stanzbrille");
-
-        jTextField4.setText("jTextField4");
-
-        jLabel5.setText("KWR - Stapelung");
-
-        jTextField5.setText("jTextField5");
-
-        jLabel6.setText("KWN - Niederhalter");
-
-        jTextField6.setText("jTextField6");
-
-        javax.swing.GroupLayout jPanel_currentTool_componentsLayout = new javax.swing.GroupLayout(jPanel_currentTool_components);
-        jPanel_currentTool_components.setLayout(jPanel_currentTool_componentsLayout);
-        jPanel_currentTool_componentsLayout.setHorizontalGroup(
-            jPanel_currentTool_componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_currentTool_componentsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel_currentTool_componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFiell_currentTool)
-                    .addComponent(lbl_currentWKZ, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        jPanel_AktuellerArbeitsgangLayout.setVerticalGroup(
+            jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuellerArbeitsgangLayout.createSequentialGroup()
+                .addComponent(jTextField_AktuellerArbeitsgang, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_currentTool_componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel_currentTool_componentsLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6))
-                    .addGroup(jPanel_currentTool_componentsLayout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btn_stop, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_start, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_StartAktuellerArbeitsgang)
+                    .addComponent(lbl_EndeAktuellerArbeitsgang))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextField_StartAktuellerArbeitsgang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField_EndeAktuellerArbeitsgang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_remarks_fromOutside)
+                    .addComponent(lbl_remarks_toOutside))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTextField_remarks_fromOutside, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                    .addComponent(jTextField_remarks_toOutside))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel_currentTool_componentsLayout.setVerticalGroup(
-            jPanel_currentTool_componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_currentTool_componentsLayout.createSequentialGroup()
+
+        javax.swing.GroupLayout jPanel_baseLayout = new javax.swing.GroupLayout(jPanel_base);
+        jPanel_base.setLayout(jPanel_baseLayout);
+        jPanel_baseLayout.setHorizontalGroup(
+            jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_baseLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel_currentTool_componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_currentWKZ)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6))
+                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel_Team, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
+                    .addComponent(jPanel_Unterabteilung, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel_AktuelleTaetigkeiten, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel_AktuelleUhrzeit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_currentTool_componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel_currentTool_componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextFiell_currentTool, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel_currentTool_componentsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel_Werkzeugkomponenten, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel_AktuellerArtikelFA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel_AktuellerArbeitsgang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_baseLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel_head_Bearbeitung, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        jPanel_baseLayout.setVerticalGroup(
+            jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_baseLayout.createSequentialGroup()
+                .addGap(119, 119, 119)
+                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel_AktuellerArtikelFA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel_AktuelleUhrzeit, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel_Unterabteilung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel_Werkzeugkomponenten, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel_baseLayout.createSequentialGroup()
+                        .addComponent(jPanel_Team, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel_AktuelleTaetigkeiten, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel_AktuellerArbeitsgang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+            .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_baseLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel_head_Bearbeitung, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(865, 865, 865)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel_head_buttons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jPanel_team, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel_workArea, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel_clock, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel_currentJobs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel_currentArticleData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel_currentTool_components, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel_currentJob, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+            .addComponent(jPanel_base, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel_head_buttons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel_currentArticleData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel_clock, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel_workArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel_currentTool_components, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel_team, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel_currentJobs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel_currentJob, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+            .addComponent(jPanel_base, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_employee_signOnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_employee_signOnActionPerformed
+    private void getDBConnection() { 
+        MY_DBCM = new DB_ConnectionManager("jdbc:sqlserver://HV-ABAS-SQL;databaseName=DiafBDE;integratedSecurity=true", "CONNECT");
+        if (!MY_DBCM.isConnnected()) {
+            JOptionPane.showMessageDialog(null,
+                    "Der Verbindungs-Aufbau zur Datenbank ist gescheitert. Bitte wenden Sie sich an den Entwickler.",
+                    "Fehler",
+                    JOptionPane.ERROR_MESSAGE);
+        }        
+    }
+    
+    private void btn_PersonalAnmeldenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_PersonalAnmeldenActionPerformed
         // TODO add your handling code here:
-        BDE_EmployeeDialog bde_mainDialog = new BDE_EmployeeDialog(this,true, "SIGN_ON");
-        bde_mainDialog.setTitle("Personal anmelden");
-        bde_mainDialog.setSize(1400, 900);
-        bde_mainDialog.setResizable(false);
-        bde_mainDialog.setLocation(50, 50);
-        bde_mainDialog.setVisible(true);
-        String[] currentEmployeeData = bde_mainDialog.getValueAsArray();
-        this.setCurrentEmployeeData(currentEmployeeData);
-    }//GEN-LAST:event_btn_employee_signOnActionPerformed
+        Unterabteilung = jComboBox_Unterabteilung.getSelectedItem().toString();
+        BDE_EmployeeDialog bde_employeeDialog = new BDE_EmployeeDialog(this,true, "SIGN_ON", Unterabteilung);
+        bde_employeeDialog.setTitle("Personal anmelden");
+        bde_employeeDialog.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height - 30);
+        bde_employeeDialog.setResizable(false);
+//        bde_employeeDialog.setLocation(50, 50);
+        bde_employeeDialog.setVisible(true);
+        String[] employeeData = bde_employeeDialog.getEmployeeDataAsArray();   
+        if (!employeeData[0].equals("") && !employeeData[1].equals("") && !employeeData[2].equals("") && !employeeData[3].equals("")) {
+            if (test_isDataSetInTable(employeeData[3]) == false) {
+                this.setCurrentEmployeeData(employeeData);
+                btn_PersonalAbmelden.setEnabled(true);
+//                btn_order_signOff.setEnabled(true);
+            }
+        }
+    }//GEN-LAST:event_btn_PersonalAnmeldenActionPerformed
 
-    private void btn_order_signOnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_order_signOnActionPerformed
+    private void btn_AuftragAnmeldenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_AuftragAnmeldenActionPerformed
         // TODO add your handling code here:
         BDE_OrderDialog bde_orderDialog = new BDE_OrderDialog(this, true, "SIGN_ON");
         bde_orderDialog.setTitle("Auftrag anmelden");
-        bde_orderDialog.setSize(1400, 900);
+        bde_orderDialog.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height - 30); //1400,900
         bde_orderDialog.setResizable(false);
-        bde_orderDialog.setLocation(50, 50);
+//        bde_orderDialog.setLocation(50, 50);
         bde_orderDialog.setVisible(true);
         String[] currentArticleData = bde_orderDialog.getValueAsArray();
-        this.setCurrentArticleData(currentArticleData);
-    }//GEN-LAST:event_btn_order_signOnActionPerformed
-
+        this.setCurrentArticleData(currentArticleData);        
+        get_DependentValues();
+//        DocumentListener dl = new DocumentListener() {
+//            @Override
+//            public void changedUpdate(DocumentEvent de) {
+////                System.out.println(de);
+//                get_DependentValues();
+////                if (checkValidity()) {
+////                    updateData();
+////                }
+//            }
+//
+//            @Override
+//            public void insertUpdate(DocumentEvent de) {
+////                System.out.println(de);
+//                get_DependentValues();
+////                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//            }
+//
+//            @Override
+//            public void removeUpdate(DocumentEvent de) {
+////                System.out.println(de);
+//                get_DependentValues();
+////                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//            }
+//        };
+//        jTextField_Artikel.getDocument().addDocumentListener(dl);
+    }//GEN-LAST:event_btn_AuftragAnmeldenActionPerformed
+   
+    private void get_DependentValues() {        
+        try
+        { 
+            getDBConnection();
+            MY_DBCM.setConnection_CLOSED("jdbc:sqlserver://HV-ABAS-SQL;databaseName=DiafBDE;integratedSecurity=true", "DISCONNECT");
+            MY_DBCM = new DB_ConnectionManager("jdbc:sqlserver://HV-ABAS-SQL;databaseName=DiafBDE;integratedSecurity=true", "CONNECT");
+            myConnection = MY_DBCM.getConnection();
+            Statement myStatement = myConnection.createStatement();
+            String mySQL = "SELECT * FROM DiafBDE.dbo.V_Werkzeugstamm WHERE V_Werkzeugstamm.Segment = '" + jTextField_Artikel.getText().trim() + "'";
+            ResultSet myResultSet = myStatement.executeQuery(mySQL);  
+            int myColumns = myResultSet.getMetaData().getColumnCount();
+            while (myResultSet.next()) {
+                
+                for (int i = 1; i <= myColumns; i++) {
+                          
+                    String myDataSet = myResultSet.getString(i);
+                    System.out.println(myDataSet);
+                    if (!myResultSet.getString(1).equals("W0")) {jTextField_Werkzeug.setText(myResultSet.getString(1));}
+                    else {jTextField_Werkzeug.setText("");}
+                    if (!myResultSet.getString(4).equals("KP0")) {jTextField_Segment.setText(myResultSet.getString(4));}
+                    else {jTextField_Segment.setText("");}
+                    if (!myResultSet.getString(5).equals("GF0")) {jTextField_Grundform.setText(myResultSet.getString(5));}
+                    else {jTextField_Grundform.setText("");}
+                    if (!myResultSet.getString(6).equals("KWS0")) {jTextField_Schnitt.setText(myResultSet.getString(6));}
+                    else {jTextField_Schnitt.setText("");}
+                    if (!myResultSet.getString(7).equals("KWR0")) {jTextField_Stapelung.setText(myResultSet.getString(7));}
+                    else {jTextField_Stapelung.setText("");}
+                    if (!myResultSet.getString(8).equals("B0")) {jTextField_Stanzblech.setText(myResultSet.getString(8));}
+                    else {jTextField_Stanzblech.setText("");}
+                    if (!myResultSet.getString(9).equals("KSB0")) {jTextField_Stanzbrille.setText(myResultSet.getString(9));}
+                    else {jTextField_Stanzbrille.setText("");}
+                    if (!myResultSet.getString(10).equals("KWV0")) {jTextField_Vorstempel.setText(myResultSet.getString(10));}
+                    else {jTextField_Vorstempel.setText("");}
+                    if (!myResultSet.getString(11).equals("KWN0")) {jTextField_Niederhalterplatte.setText(myResultSet.getString(11));}
+                    else {jTextField_Niederhalterplatte.setText("");}
+                    if (!myResultSet.getString(12).equals("ASB0")) {jTextField_Ausbrechstempel.setText(myResultSet.getString(12));}
+                    else {jTextField_Ausbrechstempel.setText("");}
+                    if (!myResultSet.getString(13).equals("LW0")) {jTextField_Lochwerkzeug.setText(myResultSet.getString(13));}
+                    else {jTextField_Lochwerkzeug.setText("");}
+                    if (!myResultSet.getString(14).equals("STAL0")) {jTextField_STAL.setText(myResultSet.getString(14));}
+                    else {jTextField_STAL.setText("");}
+                    if (!myResultSet.getString(15).equals("FK0")) {jTextField_Führungskäfig.setText(myResultSet.getString(15));}
+                    else {jTextField_Führungskäfig.setText("");}
+                    if (!myResultSet.getString(16).equals("SG0")) {jTextField_Säulengestell.setText(myResultSet.getString(16));}
+                    else {jTextField_Säulengestell.setText("");}
+                    if (!myResultSet.getString(17).equals("SZ0")) {jTextField_Schriftzug.setText(myResultSet.getString(17));}
+                    else {jTextField_Schriftzug.setText("");}
+                    if (!myResultSet.getString(18).equals("GL0")) {jTextField_Glocke.setText(myResultSet.getString(18));}
+                    else {jTextField_Glocke.setText("");}
+                    if (!myResultSet.getString(19).equals("ZEN0")) {jTextField_Zentrierer.setText(myResultSet.getString(19));}
+                    else {jTextField_Zentrierer.setText("");}
+                }   
+            }
+        }
+        catch (SQLException myException )
+        {
+            System.out.println(myException);
+        }
+        finally {
+            try { 
+                if (myConnection != null && !myConnection.isClosed()) {
+                    myConnection.close();
+                }
+            } catch (SQLException myException) {
+                System.out.println(myException);
+            }
+        }
+    }
     
     private void setCurrentEmployeeData(String[] anArrayOfValues) {
-       myTableModel = (DefaultTableModel) jTable_employeesSignedOn.getModel();
-       myTableModel.addRow(anArrayOfValues);
+       myTableModel_team.addRow(anArrayOfValues);
     }
     
     private void setCurrentArticleData(String[] anArrayOfValues) {
-        jTextField_currentOrder.setText(anArrayOfValues[0]);
-        jTextFieldl_currentArticle.setText(anArrayOfValues[1]);
-        jTextField_currentMachine.setText(anArrayOfValues[2]);
-        jTextFiell_plannedStartInProduction.setText(anArrayOfValues[3]);
+        jTextField_Fertigungsauftrag.setText(anArrayOfValues[0]);
+        jTextField_Artikel.setText(anArrayOfValues[1]);
+        jTextField_Maschine.setText(anArrayOfValues[2]);
+        jTextField_geplanterStartProduktion.setText(anArrayOfValues[3]);
     }
     
-    private void btn_exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_exitActionPerformed
+    private void btn_ProgrammBeendenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ProgrammBeendenActionPerformed
         // TODO add your handling code here:
-        //        Thread.interrupt();
-        //        System.gc();
-        EndingMyThread = true;
-        this.dispose();
-    }//GEN-LAST:event_btn_exitActionPerformed
+        int myAnswer = 0;
+        myAnswer = JOptionPane.showOptionDialog(null, 
+        "\nMöchten Sie das Programm wirklich beenden?\n\n", 
+        "BDE-Panel beenden?", 
+        JOptionPane.OK_CANCEL_OPTION, 
+        JOptionPane.WARNING_MESSAGE, 
+        null, 
+        new String[]{"Abbrechen", "Programm beenden"},
+        "default");
+        
+        if (myAnswer == 1) {
+            EndingMyThread = true;
+            this.dispose();
+        }
+    }//GEN-LAST:event_btn_ProgrammBeendenActionPerformed
+
+    private void btn_PersonalAbmeldenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_PersonalAbmeldenActionPerformed
+        // TODO add your handling code here:
+        BDE_EmployeeDialog bde_employeeDialog = new BDE_EmployeeDialog(this,true, "SIGN_OFF", "ALL");
+        bde_employeeDialog.setTitle("Personal abmelden");
+        bde_employeeDialog.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height - 30);
+        bde_employeeDialog.setResizable(false);
+//        bde_employeeDialog.setLocation(50, 50);
+        bde_employeeDialog.setVisible(true);
+//        String[] employeeData = bde_employeeDialog.getEmployeeDataAsArray();   
+//        if (!employeeData[0].equals("") && !employeeData[1].equals("") && !employeeData[2].equals("")) {
+//            if (test_isDataSetInTable(employeeData[2]) == false) {
+//                this.setCurrentEmployeeData(employeeData);
+//            }
+//        }
+    }//GEN-LAST:event_btn_PersonalAbmeldenActionPerformed
+
+    private void jTextField_ArtikelInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_jTextField_ArtikelInputMethodTextChanged
+        // TODO add your handling code here:
+        get_DependentValues();
+    }//GEN-LAST:event_jTextField_ArtikelInputMethodTextChanged
+
+    private void btn_TaetigkeitenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_TaetigkeitenActionPerformed
+        // TODO add your handling code here:
+        BDE_TaetigkeitenDialog bde_taetigkeitenDialog = new BDE_TaetigkeitenDialog(this, true);
+        bde_taetigkeitenDialog.setTitle("Tätigkeit auswählen");
+        bde_taetigkeitenDialog.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height - 30);
+        bde_taetigkeitenDialog.setResizable(false);
+//        bde_taetigkeitenDialog.setLocation(50, 50);
+        bde_taetigkeitenDialog.setVisible(true);
+        jTextField_AktuellerArbeitsgang.setText(bde_taetigkeitenDialog.getTaetigkeit());
+    }//GEN-LAST:event_btn_TaetigkeitenActionPerformed
+
+    private void btn_AuftragAbmeldenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_AuftragAbmeldenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_AuftragAbmeldenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -625,21 +1030,16 @@ public class BDE_MainFrame extends javax.swing.JFrame {
         myThread.start();
     }    
     
-    private void do_manageAllBeforeShow() {
-        jPanel_head_buttons.setBorder(BorderFactory.createTitledBorder(" Bearbeitung "));
-        jPanel_clock.setBorder(BorderFactory.createTitledBorder(" Aktuelle Uhrzeit "));
-        jPanel_workArea.setBorder(BorderFactory.createTitledBorder(" Arbeitsbereich "));
-        jComboBox_workArea.addItem("WZV");
-        jComboBox_workArea.addItem("Werkstatt");
-        jPanel_team.setBorder(BorderFactory.createTitledBorder(" Team "));
-        jPanel_currentJobs.setBorder(BorderFactory.createTitledBorder(" Aktuelle Tätigkeiten "));
-        jPanel_currentArticleData.setBorder(BorderFactory.createTitledBorder(" Aktueller Artikel / FA "));
-        jPanel_currentJob.setBorder(BorderFactory.createTitledBorder(" Aktueller Arbeitsgang "));
-        jPanel_currentTool_components.setBorder(BorderFactory.createTitledBorder(" Werkzeugkomponenten "));
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyy");
-        lbl_currentDate.setText(LocalDate.now().format(df));
-    }
-    
+    private boolean test_isDataSetInTable(String aString) {
+        boolean myAnswer = false;
+        for (int i=0; i < jTable_team.getRowCount(); i++) {
+            int myRow = jTable_team.convertRowIndexToModel(i);
+            if (myTableModel_team.getValueAt(myRow, 3).toString().trim().equals(aString))
+                myAnswer = true;           
+        }
+        return myAnswer;
+    } 
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -671,59 +1071,87 @@ public class BDE_MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btn_activities;
-    private javax.swing.JButton btn_currentJob_end;
-    private javax.swing.JButton btn_currentJob_start;
-    private javax.swing.JButton btn_employee_signOff;
-    private javax.swing.JButton btn_employee_signOn;
-    private javax.swing.JButton btn_exit;
-    private javax.swing.JButton btn_order_signOff;
-    private javax.swing.JButton btn_order_signOn;
-    private javax.swing.JComboBox<String> jComboBox_workArea;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel_clock;
-    private javax.swing.JPanel jPanel_currentArticleData;
-    private javax.swing.JPanel jPanel_currentJob;
-    private javax.swing.JPanel jPanel_currentJobs;
-    private javax.swing.JPanel jPanel_currentTool_components;
-    private javax.swing.JPanel jPanel_head_buttons;
-    private javax.swing.JPanel jPanel_team;
-    private javax.swing.JPanel jPanel_workArea;
+    private javax.swing.JButton btn_AuftragAbmelden;
+    private javax.swing.JButton btn_AuftragAnmelden;
+    private javax.swing.JButton btn_PersonalAbmelden;
+    private javax.swing.JButton btn_PersonalAnmelden;
+    private javax.swing.JButton btn_ProgrammBeenden;
+    private javax.swing.JButton btn_Taetigkeiten;
+    private javax.swing.JButton btn_start;
+    private javax.swing.JButton btn_stop;
+    private javax.swing.JComboBox<String> jComboBox_Unterabteilung;
+    private javax.swing.JPanel jPanel_AktuelleTaetigkeiten;
+    private javax.swing.JPanel jPanel_AktuelleUhrzeit;
+    private javax.swing.JPanel jPanel_AktuellerArbeitsgang;
+    private javax.swing.JPanel jPanel_AktuellerArtikelFA;
+    private javax.swing.JPanel jPanel_Team;
+    private javax.swing.JPanel jPanel_Unterabteilung;
+    private javax.swing.JPanel jPanel_Werkzeugkomponenten;
+    private javax.swing.JPanel jPanel_base;
+    private javax.swing.JPanel jPanel_editLabels_AktuellerArtikelFA;
+    private javax.swing.JPanel jPanel_editLabels_Werkzeugkomponenten_1;
+    private javax.swing.JPanel jPanel_editLabels_Werkzeugkomponenten_2;
+    private javax.swing.JPanel jPanel_editTextFields_AktuellerArtikelFA;
+    private javax.swing.JPanel jPanel_editTextFields_Werkzeugkomponenten_1;
+    private javax.swing.JPanel jPanel_editTextFields_Werkzeugkomponenten_2;
+    private javax.swing.JPanel jPanel_head_Bearbeitung;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable_currentJobs;
-    private javax.swing.JTable jTable_employeesSignedOn;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField_currentArticleCountOfUse;
-    private javax.swing.JTextField jTextField_currentMachine;
-    private javax.swing.JTextField jTextField_currentOrder;
+    private javax.swing.JTable jTable_AktuelleTaetigkeiten;
+    private javax.swing.JTable jTable_team;
+    private javax.swing.JTextField jTextField_AktuellerArbeitsgang;
+    private javax.swing.JTextField jTextField_Artikel;
+    private javax.swing.JTextField jTextField_Ausbrechstempel;
+    private javax.swing.JTextField jTextField_EndeAktuellerArbeitsgang;
+    private javax.swing.JTextField jTextField_Fertigungsauftrag;
+    private javax.swing.JTextField jTextField_Führungskäfig;
+    private javax.swing.JTextField jTextField_Glocke;
+    private javax.swing.JTextField jTextField_Grundform;
+    private javax.swing.JTextField jTextField_Lochwerkzeug;
+    private javax.swing.JTextField jTextField_Maschine;
+    private javax.swing.JTextField jTextField_Niederhalterplatte;
+    private javax.swing.JTextField jTextField_Nutzen;
+    private javax.swing.JTextField jTextField_STAL;
+    private javax.swing.JTextField jTextField_Schnitt;
+    private javax.swing.JTextField jTextField_Schriftzug;
+    private javax.swing.JTextField jTextField_Segment;
+    private javax.swing.JTextField jTextField_Stanzblech;
+    private javax.swing.JTextField jTextField_Stanzbrille;
+    private javax.swing.JTextField jTextField_Stapelung;
+    private javax.swing.JTextField jTextField_StartAktuellerArbeitsgang;
+    private javax.swing.JTextField jTextField_Säulengestell;
+    private javax.swing.JTextField jTextField_Vorstempel;
+    private javax.swing.JTextField jTextField_Werkzeug;
+    private javax.swing.JTextField jTextField_Zentrierer;
+    private javax.swing.JTextField jTextField_geplanterStartProduktion;
     private javax.swing.JTextField jTextField_remarks_fromOutside;
     private javax.swing.JTextField jTextField_remarks_toOutside;
-    private javax.swing.JTextField jTextFieldl_currentArticle;
-    private javax.swing.JTextField jTextFieldlbl_currentJob_endTime;
-    private javax.swing.JTextField jTextFieldlbl_currentJob_startTime;
-    private javax.swing.JTextField jTextFiell_currentTool;
-    private javax.swing.JTextField jTextFiell_plannedStartInProduction;
+    private javax.swing.JLabel lbl_Artikel;
+    private javax.swing.JLabel lbl_Ausbrechstempel;
+    private javax.swing.JLabel lbl_EndeAktuellerArbeitsgang;
+    private javax.swing.JLabel lbl_Fertigungsauftrag;
+    private javax.swing.JLabel lbl_Führungskäfig;
+    private javax.swing.JLabel lbl_Glocke;
+    private javax.swing.JLabel lbl_Grundform;
+    private javax.swing.JLabel lbl_Lochwerkzeug;
+    private javax.swing.JLabel lbl_Maschine;
+    private javax.swing.JLabel lbl_Niederhalterplatte;
+    private javax.swing.JLabel lbl_Nutzen;
+    private javax.swing.JLabel lbl_STAL;
+    private javax.swing.JLabel lbl_Schnitt;
+    private javax.swing.JLabel lbl_Schriftzug;
+    private javax.swing.JLabel lbl_Segment;
+    private javax.swing.JLabel lbl_Stanzblech;
+    private javax.swing.JLabel lbl_Stanzbrille;
+    private javax.swing.JLabel lbl_Stapelung;
+    private javax.swing.JLabel lbl_StartAktuellerArbeitsgang;
+    private javax.swing.JLabel lbl_Säulengestell;
+    private javax.swing.JLabel lbl_Vorstempel;
+    private javax.swing.JLabel lbl_Werkzeug;
+    private javax.swing.JLabel lbl_Zentrierer;
     private javax.swing.JLabel lbl_clock;
-    private javax.swing.JLabel lbl_currentArticle;
-    private javax.swing.JLabel lbl_currentArticleCountOfUse;
     private javax.swing.JLabel lbl_currentDate;
-    private javax.swing.JLabel lbl_currentJob_endTime;
-    private javax.swing.JLabel lbl_currentJob_startTime;
-    private javax.swing.JLabel lbl_currentMachine;
-    private javax.swing.JLabel lbl_currentOrder;
-    private javax.swing.JLabel lbl_currentWKZ;
-    private javax.swing.JLabel lbl_plannedStartInProduction;
+    private javax.swing.JLabel lbl_geplanterStartProduktion;
     private javax.swing.JLabel lbl_remarks_fromOutside;
     private javax.swing.JLabel lbl_remarks_toOutside;
     // End of variables declaration//GEN-END:variables
