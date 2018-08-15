@@ -5,10 +5,11 @@
  */
 package GUI;
 
+import DBTools.DB_ConnectionManager;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.DriverManager;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -16,6 +17,10 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -25,22 +30,61 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form BDE_OrderDialog
+     * @param parent
+     * @param modal
      */
     public BDE_OrderDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        btn_accept.setEnabled(false);
     }
     
     public BDE_OrderDialog(java.awt.Frame parent, boolean modal, String aSign) {
         super(parent, modal);
+        TheSign = aSign;
         initComponents();
-        this.get_DBTableData();
+        btn_accept.setEnabled(false);
     }
     
+    boolean myAnswerIfConnected;
     Connection myConnection = null;
     DefaultTableModel myTableModel;
-    String [] ArticleDetails = new String[4];
+    TableRowSorter<DefaultTableModel> mySorter;
+    DB_ConnectionManager MY_DBCM;
+    String [] ArticleData = new String[4];
+    String TheSign;
 
+    private void do_preBuild() { 
+        myTableModel = (DefaultTableModel) jTable_dbData.getModel();    
+        createRowSorter(myTableModel); 
+        if (TheSign.equals("SIGN_ON")) {
+            getDBConnection();
+            get_DBTableData(); 
+        } 
+        if (TheSign.equals("SIGN_OFF")) {
+            // ergänzen
+            //Informationen kommen aus der neuen Tabelle des MainFrame
+        }
+        lbl_rowCount.setText(String.valueOf(mySorter.getViewRowCount()) + " von " + String.valueOf(myTableModel.getRowCount()));
+    } 
+    
+    private void do_postBuild() {                
+        jTable_dbData.getSelectionModel().addListSelectionListener((ListSelectionEvent event) -> {
+            if (jTable_dbData.getSelectedRow() != -1) {
+                btn_accept.setEnabled(true);
+            }
+            else {btn_accept.setEnabled(false);}
+        });
+    }
+    private void createRowSorter(DefaultTableModel aModel) {
+        mySorter = new TableRowSorter<>(aModel);
+        jTable_dbData.setRowSorter(mySorter);
+    }
+    
+    private void search() {
+        String searchTerm = jTextField_searchValue.getText();
+        mySorter.setRowFilter(RowFilter.regexFilter(searchTerm));
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -50,19 +94,34 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel_base = new javax.swing.JPanel();
         jPanel_table = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable_plannedOrders = new javax.swing.JTable();
+        jTable_dbData = new javax.swing.JTable();
         lbl_rowCount = new javax.swing.JLabel();
+        jTextField_searchValue = new javax.swing.JTextField();
+        btn_deleteSearchValue = new javax.swing.JButton();
+        btn_getCurrentDBData = new javax.swing.JButton();
+        lbl_search = new javax.swing.JLabel();
         jPanel_foot = new javax.swing.JPanel();
         btn_accept = new javax.swing.JButton();
         btn_cancel = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setBackground(new java.awt.Color(204, 255, 204));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
-        jTable_plannedOrders.setAutoCreateRowSorter(true);
-        jTable_plannedOrders.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jTable_plannedOrders.setModel(new javax.swing.table.DefaultTableModel(
+        jPanel_base.setBackground(new java.awt.Color(204, 255, 204));
+
+        jPanel_table.setOpaque(false);
+
+        jTable_dbData.setAutoCreateRowSorter(true);
+        jTable_dbData.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jTable_dbData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -78,9 +137,35 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable_plannedOrders);
+        jTable_dbData.setRowHeight(28);
+        jScrollPane1.setViewportView(jTable_dbData);
 
-        lbl_rowCount.setText("jLabel1");
+        lbl_rowCount.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbl_rowCount.setPreferredSize(new java.awt.Dimension(300, 14));
+
+        jTextField_searchValue.setPreferredSize(new java.awt.Dimension(120, 20));
+        jTextField_searchValue.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField_searchValueKeyReleased(evt);
+            }
+        });
+
+        btn_deleteSearchValue.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Löschen.png"))); // NOI18N
+        btn_deleteSearchValue.setPreferredSize(new java.awt.Dimension(23, 23));
+        btn_deleteSearchValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_deleteSearchValueActionPerformed(evt);
+            }
+        });
+
+        btn_getCurrentDBData.setText("Aktualisieren");
+        btn_getCurrentDBData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_getCurrentDBDataActionPerformed(evt);
+            }
+        });
+
+        lbl_search.setText("Suchen");
 
         javax.swing.GroupLayout jPanel_tableLayout = new javax.swing.GroupLayout(jPanel_table);
         jPanel_table.setLayout(jPanel_tableLayout);
@@ -89,30 +174,54 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
             .addGroup(jPanel_tableLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel_tableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_tableLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(lbl_rowCount)))
+                    .addGroup(jPanel_tableLayout.createSequentialGroup()
+                        .addGroup(jPanel_tableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_search)
+                            .addGroup(jPanel_tableLayout.createSequentialGroup()
+                                .addComponent(jTextField_searchValue, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_deleteSearchValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btn_getCurrentDBData)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                        .addComponent(lbl_rowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         jPanel_tableLayout.setVerticalGroup(
             jPanel_tableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_tableLayout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(lbl_rowCount)
+                .addGroup(jPanel_tableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbl_rowCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel_tableLayout.createSequentialGroup()
+                        .addComponent(lbl_search)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel_tableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel_tableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btn_deleteSearchValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btn_getCurrentDBData))
+                            .addComponent(jTextField_searchValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
+        jPanel_foot.setOpaque(false);
+        jPanel_foot.setPreferredSize(new java.awt.Dimension(204, 82));
+
+        btn_accept.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btn_accept.setText("Übernehmen");
+        btn_accept.setPreferredSize(new java.awt.Dimension(150, 60));
         btn_accept.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_acceptActionPerformed(evt);
             }
         });
 
+        btn_cancel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btn_cancel.setText("Abbrechen");
+        btn_cancel.setPreferredSize(new java.awt.Dimension(150, 60));
         btn_cancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_cancelActionPerformed(evt);
@@ -125,9 +234,9 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
             jPanel_footLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_footLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btn_accept)
+                .addComponent(btn_accept, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btn_cancel)
+                .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel_footLayout.setVerticalGroup(
@@ -135,8 +244,24 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_footLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel_footLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_accept)
-                    .addComponent(btn_cancel))
+                    .addComponent(btn_accept, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_cancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel_baseLayout = new javax.swing.GroupLayout(jPanel_base);
+        jPanel_base.setLayout(jPanel_baseLayout);
+        jPanel_baseLayout.setHorizontalGroup(
+            jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel_foot, javax.swing.GroupLayout.DEFAULT_SIZE, 693, Short.MAX_VALUE)
+            .addComponent(jPanel_table, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel_baseLayout.setVerticalGroup(
+            jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_baseLayout.createSequentialGroup()
+                .addComponent(jPanel_table, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel_foot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -144,15 +269,11 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel_table, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel_foot, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel_base, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel_table, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel_foot, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel_base, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -161,13 +282,14 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
     private void btn_acceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_acceptActionPerformed
         // TODO add your handling code here:
         //        Wert an jTable_employeesSignedOn zurückgeben
-        myTableModel = (DefaultTableModel) jTable_plannedOrders.getModel();
-        int myRow = jTable_plannedOrders.getSelectedRow();
-        this.ArticleDetails [0] = myTableModel.getValueAt(myRow, 0).toString().trim();
-        this.ArticleDetails [1] = myTableModel.getValueAt(myRow, 1).toString().trim();
-        this.ArticleDetails [2] = myTableModel.getValueAt(myRow, 2).toString().trim();
-        this.ArticleDetails [3] = myTableModel.getValueAt(myRow, 3).toString().trim();
-        this.dispose();
+        int myRow = jTable_dbData.getSelectedRow();
+        if (myRow != -1) {
+            this.ArticleData [0] = myTableModel.getValueAt(myRow, 0).toString().trim();
+            this.ArticleData [1] = myTableModel.getValueAt(myRow, 1).toString().trim();
+            this.ArticleData [2] = myTableModel.getValueAt(myRow, 2).toString().trim();
+            this.ArticleData [3] = myTableModel.getValueAt(myRow, 3).toString().trim();
+            this.dispose();
+        }
     }//GEN-LAST:event_btn_acceptActionPerformed
     
     /**
@@ -175,31 +297,70 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
      * @return
      */
     public String[] getValueAsArray() {
-        return this.ArticleDetails; 
+        return this.ArticleData; 
     }
     
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
         // TODO add your handling code here:
+        this.ArticleData [0] = "";
+        this.ArticleData [1] = "";
+        this.ArticleData [2] = "";
+        this.ArticleData [3] = "";
         this.dispose();
     }//GEN-LAST:event_btn_cancelActionPerformed
 
+    private void jTextField_searchValueKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_searchValueKeyReleased
+        // TODO add your handling code here:
+        search();
+        lbl_rowCount.setText(String.valueOf(mySorter.getViewRowCount()) + " von " + String.valueOf(myTableModel.getRowCount()));
+    }//GEN-LAST:event_jTextField_searchValueKeyReleased
+
+    private void btn_deleteSearchValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteSearchValueActionPerformed
+        // TODO add your handling code here:
+        jTextField_searchValue.setText("");
+        search();
+        lbl_rowCount.setText(String.valueOf(mySorter.getViewRowCount()) + " von " + String.valueOf(myTableModel.getRowCount()));
+    }//GEN-LAST:event_btn_deleteSearchValueActionPerformed
+
+    private void btn_getCurrentDBDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_getCurrentDBDataActionPerformed
+        // TODO add your handling code here:
+        get_DBTableData();
+        btn_accept.setEnabled(false);
+        //        set_textFieldsEmpty();
+    }//GEN-LAST:event_btn_getCurrentDBDataActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        do_preBuild();
+        do_postBuild();
+    }//GEN-LAST:event_formWindowOpened
+
+    private void getDBConnection() { 
+        MY_DBCM = new DB_ConnectionManager("jdbc:sqlserver://HV-ABAS-SQL;databaseName=DiafBDE;integratedSecurity=true", "CONNECT");
+        if (!MY_DBCM.isConnnected()) {
+            JOptionPane.showMessageDialog(null,
+                    "Der Verbindungs-Aufbau zur Datenbank ist gescheitert. Bitte wenden Sie sich an den Entwickler.",
+                    "Fehler",
+                    JOptionPane.ERROR_MESSAGE);
+        }        
+    }
     private void get_DBTableData()
     {        
         try
         {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String myURL = "jdbc:sqlserver://HV-ABAS-SQL;databaseName=DiafBDE;integratedSecurity=true";
-            myConnection = DriverManager.getConnection(myURL);
-            if (myConnection != null) 
-            {
+            MY_DBCM.setConnection_CLOSED("jdbc:sqlserver://HV-ABAS-SQL;databaseName=DiafBDE;integratedSecurity=true", "DISCONNECT");
+            MY_DBCM = new DB_ConnectionManager("jdbc:sqlserver://HV-ABAS-SQL;databaseName=DiafBDE;integratedSecurity=true", "CONNECT");
+            myConnection = MY_DBCM.getConnection();
             Statement myStatement = myConnection.createStatement();
             String mySQL = "SELECT * FROM DiafBDE.dbo.V_Feinplanung WHERE V_Feinplanung.fap_time != '' ORDER BY V_Feinplanung.fap_time"; // WHERE tma_abt='Technik'";
             ResultSet myResultSet = myStatement.executeQuery(mySQL); 
             int myColumns = myResultSet.getMetaData().getColumnCount();
-            jTable_plannedOrders.setRowHeight(30);
+            int allOldRows = myTableModel.getRowCount();
+            if (allOldRows > 0) {
+                myTableModel.setRowCount(0);
+            }
             while (myResultSet.next()) {
-                            
-                myTableModel = (DefaultTableModel) jTable_plannedOrders.getModel();
+                          
                 String[] myValue = new String[myColumns];
                 
                 for (int i = 1; i <= myColumns; i++) {
@@ -223,12 +384,10 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
                     }
                 }  
                 myTableModel.addRow(myValue);
-            }
-            }            
-            lbl_rowCount.setText(String.valueOf(myTableModel.getRowCount()));
+            }    
         }
-        catch (ClassNotFoundException | SQLException myException)
-        {
+        catch (SQLException myException) {
+            System.out.println(myException);
         }
         finally {
             try {
@@ -236,6 +395,7 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
                     myConnection.close();
                 }
             } catch (SQLException myException) {
+                System.out.println(myException);
             }
         } 
     }
@@ -283,10 +443,15 @@ public class BDE_OrderDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_accept;
     private javax.swing.JButton btn_cancel;
+    private javax.swing.JButton btn_deleteSearchValue;
+    private javax.swing.JButton btn_getCurrentDBData;
+    private javax.swing.JPanel jPanel_base;
     private javax.swing.JPanel jPanel_foot;
     private javax.swing.JPanel jPanel_table;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable_plannedOrders;
+    private javax.swing.JTable jTable_dbData;
+    private javax.swing.JTextField jTextField_searchValue;
     private javax.swing.JLabel lbl_rowCount;
+    private javax.swing.JLabel lbl_search;
     // End of variables declaration//GEN-END:variables
 }
