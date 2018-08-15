@@ -5,6 +5,7 @@
  */
 package BDE_Panel;
 import GUI.BDE_MainFrame;
+import java.awt.Toolkit;
 
 /**
  *
@@ -19,9 +20,9 @@ public class BDEPanel {
         // TODO code application logic here
         BDE_MainFrame bde_MainFrame = new BDE_MainFrame();
         bde_MainFrame.setTitle("BDE-Panel");
-        bde_MainFrame.setSize(1400, 900);
+        bde_MainFrame.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height - 30);
         bde_MainFrame.setResizable(true);
-        bde_MainFrame.setLocation(50, 50);
+//        bde_MainFrame.setLocation(50, 50);
         bde_MainFrame.setVisible(true);
     }
     
