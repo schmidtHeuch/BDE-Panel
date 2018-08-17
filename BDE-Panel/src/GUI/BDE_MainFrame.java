@@ -16,8 +16,8 @@ import java.util.Calendar;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+//import javax.swing.event.DocumentEvent;
+//import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -45,7 +45,7 @@ public class BDE_MainFrame extends javax.swing.JFrame {
     private void do_preBuild() {
         myTableModel_team = (DefaultTableModel) jTable_team.getModel();
         jComboBox_Unterabteilung.addItem("WZV");
-        jComboBox_Unterabteilung.addItem("Werkstatt");
+//        jComboBox_Unterabteilung.addItem("Werkstatt");
         DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.yyy");
         lbl_currentDate.setText(LocalDate.now().format(df));
         if (myTableModel_team.getRowCount() == 0) {
@@ -71,17 +71,6 @@ public class BDE_MainFrame extends javax.swing.JFrame {
         btn_AuftragAbmelden = new javax.swing.JButton();
         btn_Taetigkeiten = new javax.swing.JButton();
         btn_ProgrammBeenden = new javax.swing.JButton();
-        jPanel_AktuelleUhrzeit = new javax.swing.JPanel();
-        lbl_clock = new javax.swing.JLabel();
-        lbl_currentDate = new javax.swing.JLabel();
-        jPanel_Unterabteilung = new javax.swing.JPanel();
-        jComboBox_Unterabteilung = new javax.swing.JComboBox<>();
-        jPanel_Team = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable_team = new javax.swing.JTable();
-        jPanel_AktuelleTaetigkeiten = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable_AktuelleTaetigkeiten = new javax.swing.JTable();
         jPanel_AktuellerArtikelFA = new javax.swing.JPanel();
         jPanel_editLabels_AktuellerArtikelFA = new javax.swing.JPanel();
         lbl_Artikel = new javax.swing.JLabel();
@@ -146,6 +135,28 @@ public class BDE_MainFrame extends javax.swing.JFrame {
         lbl_remarks_fromOutside = new javax.swing.JLabel();
         lbl_remarks_toOutside = new javax.swing.JLabel();
         jTextField_AktuellerArbeitsgang = new javax.swing.JTextField();
+        jPanel_ZeitUnterabteilungTeamHistorie = new javax.swing.JPanel();
+        jPanel_AktuelleUhrzeit = new javax.swing.JPanel();
+        lbl_clock = new javax.swing.JLabel();
+        lbl_currentDate = new javax.swing.JLabel();
+        jPanel_Unterabteilung = new javax.swing.JPanel();
+        jComboBox_Unterabteilung = new javax.swing.JComboBox<>();
+        jPanel_Team = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable_team = new javax.swing.JTable();
+        jPanel_AktuelleTaetigkeiten = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable_AktuelleTaetigkeiten = new javax.swing.JTable();
+        jPanel_status = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jLabel2 = new javax.swing.JLabel();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        btn_statusColor = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(204, 255, 204));
@@ -219,7 +230,7 @@ public class BDE_MainFrame extends javax.swing.JFrame {
                 .addComponent(btn_AuftragAnmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_AuftragAbmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 859, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 909, Short.MAX_VALUE)
                 .addComponent(btn_Taetigkeiten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btn_ProgrammBeenden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -237,155 +248,6 @@ public class BDE_MainFrame extends javax.swing.JFrame {
                     .addComponent(btn_Taetigkeiten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_AuftragAbmelden, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel_AktuelleUhrzeit.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktuelle Uhrzeit"));
-        jPanel_AktuelleUhrzeit.setOpaque(false);
-
-        lbl_clock.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
-        lbl_clock.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_clock.setPreferredSize(new java.awt.Dimension(211, 51));
-
-        lbl_currentDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbl_currentDate.setPreferredSize(new java.awt.Dimension(211, 14));
-
-        javax.swing.GroupLayout jPanel_AktuelleUhrzeitLayout = new javax.swing.GroupLayout(jPanel_AktuelleUhrzeit);
-        jPanel_AktuelleUhrzeit.setLayout(jPanel_AktuelleUhrzeitLayout);
-        jPanel_AktuelleUhrzeitLayout.setHorizontalGroup(
-            jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_AktuelleUhrzeitLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbl_clock, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
-                    .addComponent(lbl_currentDate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel_AktuelleUhrzeitLayout.setVerticalGroup(
-            jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_AktuelleUhrzeitLayout.createSequentialGroup()
-                .addComponent(lbl_clock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbl_currentDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel_Unterabteilung.setBorder(javax.swing.BorderFactory.createTitledBorder("Unterabteilung"));
-        jPanel_Unterabteilung.setOpaque(false);
-
-        jComboBox_Unterabteilung.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jComboBox_Unterabteilung.setPreferredSize(new java.awt.Dimension(48, 30));
-
-        javax.swing.GroupLayout jPanel_UnterabteilungLayout = new javax.swing.GroupLayout(jPanel_Unterabteilung);
-        jPanel_Unterabteilung.setLayout(jPanel_UnterabteilungLayout);
-        jPanel_UnterabteilungLayout.setHorizontalGroup(
-            jPanel_UnterabteilungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_UnterabteilungLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jComboBox_Unterabteilung, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel_UnterabteilungLayout.setVerticalGroup(
-            jPanel_UnterabteilungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_UnterabteilungLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jComboBox_Unterabteilung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(114, Short.MAX_VALUE))
-        );
-
-        jPanel_Team.setBorder(javax.swing.BorderFactory.createTitledBorder("Team"));
-        jPanel_Team.setOpaque(false);
-        jPanel_Team.setPreferredSize(new java.awt.Dimension(200, 278));
-
-        jTable_team.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jTable_team.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Name", "Vorname", "Unterabteilung", "Personal-Nr."
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jTable_team.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        jTable_team.setRowHeight(28);
-        jTable_team.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jTable_team);
-        if (jTable_team.getColumnModel().getColumnCount() > 0) {
-            jTable_team.getColumnModel().getColumn(0).setPreferredWidth(180);
-            jTable_team.getColumnModel().getColumn(1).setPreferredWidth(120);
-            jTable_team.getColumnModel().getColumn(2).setPreferredWidth(150);
-            jTable_team.getColumnModel().getColumn(3).setPreferredWidth(80);
-        }
-
-        javax.swing.GroupLayout jPanel_TeamLayout = new javax.swing.GroupLayout(jPanel_Team);
-        jPanel_Team.setLayout(jPanel_TeamLayout);
-        jPanel_TeamLayout.setHorizontalGroup(
-            jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-            .addGroup(jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel_TeamLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-        jPanel_TeamLayout.setVerticalGroup(
-            jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 255, Short.MAX_VALUE)
-            .addGroup(jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel_TeamLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-
-        jPanel_AktuelleTaetigkeiten.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktuelle Tätigkeiten"));
-        jPanel_AktuelleTaetigkeiten.setOpaque(false);
-
-        jTable_AktuelleTaetigkeiten.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Unterabteilung", "Artikel", "Start", "Ende"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jTable_AktuelleTaetigkeiten.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        jTable_AktuelleTaetigkeiten.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(jTable_AktuelleTaetigkeiten);
-        if (jTable_AktuelleTaetigkeiten.getColumnModel().getColumnCount() > 0) {
-            jTable_AktuelleTaetigkeiten.getColumnModel().getColumn(0).setPreferredWidth(150);
-        }
-
-        javax.swing.GroupLayout jPanel_AktuelleTaetigkeitenLayout = new javax.swing.GroupLayout(jPanel_AktuelleTaetigkeiten);
-        jPanel_AktuelleTaetigkeiten.setLayout(jPanel_AktuelleTaetigkeitenLayout);
-        jPanel_AktuelleTaetigkeitenLayout.setHorizontalGroup(
-            jPanel_AktuelleTaetigkeitenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_AktuelleTaetigkeitenLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel_AktuelleTaetigkeitenLayout.setVerticalGroup(
-            jPanel_AktuelleTaetigkeitenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_AktuelleTaetigkeitenLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
-                .addContainerGap())
         );
 
         jPanel_AktuellerArtikelFA.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktueller Artikel / FA"));
@@ -458,7 +320,7 @@ public class BDE_MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel_AktuellerArtikelFALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel_editLabels_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel_editTextFields_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(388, Short.MAX_VALUE))
         );
         jPanel_AktuellerArtikelFALayout.setVerticalGroup(
             jPanel_AktuellerArtikelFALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -466,7 +328,7 @@ public class BDE_MainFrame extends javax.swing.JFrame {
                 .addComponent(jPanel_editLabels_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel_editTextFields_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         jPanel_Werkzeugkomponenten.setBorder(javax.swing.BorderFactory.createTitledBorder("Werkzeugkomponenten"));
@@ -647,7 +509,7 @@ public class BDE_MainFrame extends javax.swing.JFrame {
                     .addComponent(jPanel_editTextFields_Werkzeugkomponenten_1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel_editTextFields_Werkzeugkomponenten_2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jPanel_editLabels_Werkzeugkomponenten_2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel_editLabels_Werkzeugkomponenten_1, javax.swing.GroupLayout.DEFAULT_SIZE, 1178, Short.MAX_VALUE))
+                    .addComponent(jPanel_editLabels_Werkzeugkomponenten_1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel_WerkzeugkomponentenLayout.setVerticalGroup(
@@ -707,7 +569,7 @@ public class BDE_MainFrame extends javax.swing.JFrame {
                             .addComponent(lbl_remarks_fromOutside)
                             .addComponent(jTextField_StartAktuellerArbeitsgang)
                             .addComponent(jTextField_remarks_fromOutside))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                         .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(lbl_remarks_toOutside)
                             .addComponent(lbl_EndeAktuellerArbeitsgang)
@@ -737,9 +599,260 @@ public class BDE_MainFrame extends javax.swing.JFrame {
                     .addComponent(lbl_remarks_fromOutside)
                     .addComponent(lbl_remarks_toOutside))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField_remarks_fromOutside, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addGroup(jPanel_AktuellerArbeitsgangLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextField_remarks_fromOutside, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
                     .addComponent(jTextField_remarks_toOutside))
+                .addContainerGap())
+        );
+
+        jPanel_ZeitUnterabteilungTeamHistorie.setBackground(new java.awt.Color(204, 255, 204));
+
+        jPanel_AktuelleUhrzeit.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktuelle Uhrzeit"));
+        jPanel_AktuelleUhrzeit.setOpaque(false);
+
+        lbl_clock.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        lbl_clock.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_clock.setPreferredSize(new java.awt.Dimension(211, 51));
+
+        lbl_currentDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl_currentDate.setPreferredSize(new java.awt.Dimension(211, 14));
+
+        javax.swing.GroupLayout jPanel_AktuelleUhrzeitLayout = new javax.swing.GroupLayout(jPanel_AktuelleUhrzeit);
+        jPanel_AktuelleUhrzeit.setLayout(jPanel_AktuelleUhrzeitLayout);
+        jPanel_AktuelleUhrzeitLayout.setHorizontalGroup(
+            jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuelleUhrzeitLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbl_clock, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(lbl_currentDate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel_AktuelleUhrzeitLayout.setVerticalGroup(
+            jPanel_AktuelleUhrzeitLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuelleUhrzeitLayout.createSequentialGroup()
+                .addComponent(lbl_clock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_currentDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel_Unterabteilung.setBorder(javax.swing.BorderFactory.createTitledBorder("Unterabteilung"));
+        jPanel_Unterabteilung.setOpaque(false);
+
+        jComboBox_Unterabteilung.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jComboBox_Unterabteilung.setPreferredSize(new java.awt.Dimension(48, 30));
+
+        javax.swing.GroupLayout jPanel_UnterabteilungLayout = new javax.swing.GroupLayout(jPanel_Unterabteilung);
+        jPanel_Unterabteilung.setLayout(jPanel_UnterabteilungLayout);
+        jPanel_UnterabteilungLayout.setHorizontalGroup(
+            jPanel_UnterabteilungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_UnterabteilungLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jComboBox_Unterabteilung, 0, 321, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel_UnterabteilungLayout.setVerticalGroup(
+            jPanel_UnterabteilungLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_UnterabteilungLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jComboBox_Unterabteilung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel_Team.setBorder(javax.swing.BorderFactory.createTitledBorder("Team"));
+        jPanel_Team.setOpaque(false);
+        jPanel_Team.setPreferredSize(new java.awt.Dimension(200, 278));
+
+        jTable_team.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jTable_team.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Name", "Vorname", "Unterabteilung", "Personal-Nr."
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_team.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTable_team.setRowHeight(28);
+        jTable_team.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTable_team);
+        if (jTable_team.getColumnModel().getColumnCount() > 0) {
+            jTable_team.getColumnModel().getColumn(0).setPreferredWidth(180);
+            jTable_team.getColumnModel().getColumn(1).setPreferredWidth(120);
+            jTable_team.getColumnModel().getColumn(2).setPreferredWidth(150);
+            jTable_team.getColumnModel().getColumn(3).setPreferredWidth(80);
+        }
+
+        javax.swing.GroupLayout jPanel_TeamLayout = new javax.swing.GroupLayout(jPanel_Team);
+        jPanel_Team.setLayout(jPanel_TeamLayout);
+        jPanel_TeamLayout.setHorizontalGroup(
+            jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_TeamLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        jPanel_TeamLayout.setVerticalGroup(
+            jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 255, Short.MAX_VALUE)
+            .addGroup(jPanel_TeamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_TeamLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        jPanel_AktuelleTaetigkeiten.setBorder(javax.swing.BorderFactory.createTitledBorder("Aktuelle Tätigkeiten"));
+        jPanel_AktuelleTaetigkeiten.setOpaque(false);
+
+        jTable_AktuelleTaetigkeiten.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Unterabteilung", "Artikel", "Start", "Ende"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable_AktuelleTaetigkeiten.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        jTable_AktuelleTaetigkeiten.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(jTable_AktuelleTaetigkeiten);
+        if (jTable_AktuelleTaetigkeiten.getColumnModel().getColumnCount() > 0) {
+            jTable_AktuelleTaetigkeiten.getColumnModel().getColumn(0).setPreferredWidth(150);
+        }
+
+        javax.swing.GroupLayout jPanel_AktuelleTaetigkeitenLayout = new javax.swing.GroupLayout(jPanel_AktuelleTaetigkeiten);
+        jPanel_AktuelleTaetigkeiten.setLayout(jPanel_AktuelleTaetigkeitenLayout);
+        jPanel_AktuelleTaetigkeitenLayout.setHorizontalGroup(
+            jPanel_AktuelleTaetigkeitenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuelleTaetigkeitenLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel_AktuelleTaetigkeitenLayout.setVerticalGroup(
+            jPanel_AktuelleTaetigkeitenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_AktuelleTaetigkeitenLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel_ZeitUnterabteilungTeamHistorieLayout = new javax.swing.GroupLayout(jPanel_ZeitUnterabteilungTeamHistorie);
+        jPanel_ZeitUnterabteilungTeamHistorie.setLayout(jPanel_ZeitUnterabteilungTeamHistorieLayout);
+        jPanel_ZeitUnterabteilungTeamHistorieLayout.setHorizontalGroup(
+            jPanel_ZeitUnterabteilungTeamHistorieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel_AktuelleTaetigkeiten, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel_Team, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+            .addComponent(jPanel_Unterabteilung, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel_ZeitUnterabteilungTeamHistorieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel_AktuelleUhrzeit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel_ZeitUnterabteilungTeamHistorieLayout.setVerticalGroup(
+            jPanel_ZeitUnterabteilungTeamHistorieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_ZeitUnterabteilungTeamHistorieLayout.createSequentialGroup()
+                .addGap(105, 105, 105)
+                .addComponent(jPanel_Unterabteilung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel_Team, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel_AktuelleTaetigkeiten, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel_ZeitUnterabteilungTeamHistorieLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_ZeitUnterabteilungTeamHistorieLayout.createSequentialGroup()
+                    .addComponent(jPanel_AktuelleUhrzeit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 685, Short.MAX_VALUE)))
+        );
+
+        jPanel_status.setBorder(javax.swing.BorderFactory.createTitledBorder("Status"));
+
+        jLabel1.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel1.setText("Vorgehensweise:");
+
+        jCheckBox1.setForeground(new java.awt.Color(153, 153, 153));
+        jCheckBox1.setText("Personal anmelden");
+
+        jLabel2.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel2.setText("->");
+
+        jCheckBox2.setForeground(new java.awt.Color(153, 153, 153));
+        jCheckBox2.setText("Auftrag anmelden");
+
+        jLabel3.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel3.setText("->");
+
+        jCheckBox3.setForeground(new java.awt.Color(153, 153, 153));
+        jCheckBox3.setText("Tätigkeit auswählen");
+
+        jLabel4.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel4.setText("->");
+
+        jCheckBox4.setForeground(new java.awt.Color(153, 153, 153));
+        jCheckBox4.setText("Start");
+
+        btn_statusColor.setBackground(new java.awt.Color(255, 0, 51));
+        btn_statusColor.setBorder(null);
+        btn_statusColor.setEnabled(false);
+        btn_statusColor.setFocusable(false);
+        btn_statusColor.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        javax.swing.GroupLayout jPanel_statusLayout = new javax.swing.GroupLayout(jPanel_status);
+        jPanel_status.setLayout(jPanel_statusLayout);
+        jPanel_statusLayout.setHorizontalGroup(
+            jPanel_statusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_statusLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btn_statusColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(11, 11, 11)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jCheckBox4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel_statusLayout.setVerticalGroup(
+            jPanel_statusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_statusLayout.createSequentialGroup()
+                .addGroup(jPanel_statusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel_statusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jCheckBox1)
+                        .addComponent(jLabel2)
+                        .addComponent(jCheckBox2)
+                        .addComponent(jLabel3))
+                    .addGroup(jPanel_statusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jCheckBox3)
+                        .addComponent(jLabel4)
+                        .addComponent(jCheckBox4))
+                    .addComponent(btn_statusColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -749,16 +862,13 @@ public class BDE_MainFrame extends javax.swing.JFrame {
             jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_baseLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel_Team, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
-                    .addComponent(jPanel_Unterabteilung, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel_AktuelleTaetigkeiten, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel_AktuelleUhrzeit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel_ZeitUnterabteilungTeamHistorie, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel_Werkzeugkomponenten, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel_AktuellerArtikelFA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel_AktuellerArbeitsgang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel_AktuellerArbeitsgang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel_status, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel_baseLayout.createSequentialGroup()
@@ -771,25 +881,21 @@ public class BDE_MainFrame extends javax.swing.JFrame {
             .addGroup(jPanel_baseLayout.createSequentialGroup()
                 .addGap(119, 119, 119)
                 .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel_AktuellerArtikelFA, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel_AktuelleUhrzeit, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel_Unterabteilung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel_Werkzeugkomponenten, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel_ZeitUnterabteilungTeamHistorie, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel_baseLayout.createSequentialGroup()
-                        .addComponent(jPanel_Team, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel_AktuellerArtikelFA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel_AktuelleTaetigkeiten, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel_AktuellerArbeitsgang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanel_Werkzeugkomponenten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel_AktuellerArbeitsgang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel_status, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
             .addGroup(jPanel_baseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel_baseLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jPanel_head_Bearbeitung, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGap(865, 865, 865)))
+                    .addComponent(jPanel_head_Bearbeitung, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(804, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1078,8 +1184,17 @@ public class BDE_MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton btn_ProgrammBeenden;
     private javax.swing.JButton btn_Taetigkeiten;
     private javax.swing.JButton btn_start;
+    private javax.swing.JButton btn_statusColor;
     private javax.swing.JButton btn_stop;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JComboBox<String> jComboBox_Unterabteilung;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel_AktuelleTaetigkeiten;
     private javax.swing.JPanel jPanel_AktuelleUhrzeit;
     private javax.swing.JPanel jPanel_AktuellerArbeitsgang;
@@ -1087,6 +1202,7 @@ public class BDE_MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel_Team;
     private javax.swing.JPanel jPanel_Unterabteilung;
     private javax.swing.JPanel jPanel_Werkzeugkomponenten;
+    private javax.swing.JPanel jPanel_ZeitUnterabteilungTeamHistorie;
     private javax.swing.JPanel jPanel_base;
     private javax.swing.JPanel jPanel_editLabels_AktuellerArtikelFA;
     private javax.swing.JPanel jPanel_editLabels_Werkzeugkomponenten_1;
@@ -1095,6 +1211,7 @@ public class BDE_MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel_editTextFields_Werkzeugkomponenten_1;
     private javax.swing.JPanel jPanel_editTextFields_Werkzeugkomponenten_2;
     private javax.swing.JPanel jPanel_head_Bearbeitung;
+    private javax.swing.JPanel jPanel_status;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable_AktuelleTaetigkeiten;
